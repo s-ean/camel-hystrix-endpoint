@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.jollydays.fabric8</groupId>
+    <artifactId>camel-hystrix-endpoind</artifactId>
+    <version>0.1.0-SNAPSHOT</version>
+    <packaging>bundle</packaging>
+    <name>Camel Hystrix endoint</name>
+    <description>Camel endpoint which wraps child endpoints into a synchronous hystrix circuit breaker</description>
+
+    <repositories>
+    <repository>
+      <id>fuse-public-repository</id>
+      <name>FuseSource Community Release Repository</name>
+      <url>https://repo.fusesource.com/nexus/content/groups/public</url>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <releases>
+        <enabled>true</enabled>
+        <updatePolicy>never</updatePolicy>
+      </releases>
+    </repository>
+  </repositories>
+
+    <pluginRepositories>
+    <pluginRepository>
+      <id>fuse-public-repository</id>
+      <name>FuseSource Community Release Repository</name>
+      <url>https://repo.fusesource.com/nexus/content/groups/public</url>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <releases>
+        <enabled>true</enabled>
+        <updatePolicy>never</updatePolicy>
+      </releases>
+    </pluginRepository>
+  </pluginRepositories>
+
+    <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <version.compiler.plugin>2.3.1</version.compiler.plugin>
+    <version.maven-bundle-plugin>2.3.7</version.maven-bundle-plugin>
+    <maven.compiler.target>1.7</maven.compiler.target>
+    <maven.compiler.source>1.7</maven.compiler.source>
+    <maven-resources-plugin-version>2.6</maven-resources-plugin-version>
+    <build-helper-maven-plugin-version>1.9.1</build-helper-maven-plugin-version>
+
+  </properties>
+    <dependencies>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.12</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.easytesting</groupId>
+			<artifactId>fest-assert</artifactId>
+			<version>1.4</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-core</artifactId>
+			<version>2.15.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-test</artifactId>
+			<version>2.15.1</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.netflix.hystrix</groupId>
+			<artifactId>hystrix-core</artifactId>
+			<version>1.4.5</version>
+		</dependency>
+		<dependency>
+			<groupId>io.reactivex</groupId>
+			<artifactId>rxjava</artifactId>
+			<version>1.0.9</version>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-simple</artifactId>
+			<version>1.7.5</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+
+    <build>
+    <finalName>${project.artifactId}</finalName>
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+        <filtering>true</filtering>
+      </resource>
+    </resources>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-resources-plugin</artifactId>
+        <version>${maven-resources-plugin-version}</version>
+        <executions>
+          <execution>
+            <id>filter</id>
+            <phase>generate-resources</phase>
+            <goals>
+              <goal>resources</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+		<plugin>
+			<groupId>org.apache.felix</groupId>
+			<artifactId>maven-bundle-plugin</artifactId>
+			<version>2.3.7</version>
+			<extensions>true</extensions>
+			<configuration>
+				<instructions>
+					<Export-Package>com.jollydays.fabric8.curator,com.jollydays.camel</Export-Package>
+				</instructions>
+			</configuration>
+		</plugin>
+	</plugins>
+  </build>
+</project>
