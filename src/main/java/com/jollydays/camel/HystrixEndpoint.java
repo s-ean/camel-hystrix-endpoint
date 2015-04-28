@@ -5,13 +5,10 @@ import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
-import org.apache.camel.spi.UriPath;
 
 @UriEndpoint(scheme = "hystrix", syntax = "hystrix:childUri", title = "hystrix component", producerOnly = true)
 public class HystrixEndpoint extends DefaultEndpoint implements DelegateEndpoint {
 
-	@UriPath
-	@Metadata(required = "true")
 	private String childUri;
 
 	@UriParam(name = "groupId")

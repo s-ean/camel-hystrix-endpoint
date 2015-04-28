@@ -53,12 +53,6 @@ public class HystrixProducer extends DefaultProducer {
 		command.execute();
 	}
 
-	@Override
-	public String toString() {
-		return "Hystrix" + child.toString();
-	}
-
-
 	public HystrixProducer(final Endpoint endpoint, final Producer child, final String groupId) {
 		super(endpoint);
 		this.child = child;
