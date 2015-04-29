@@ -8,9 +8,7 @@
 	<feature name='camel-hystrix-endpoint' version='${project.version}'>
 
 		<bundle dependency="true">mvn:com.netflix.hystrix/hystrix-core/${hystrix.version}</bundle>
-		<bundle dependency="true">
-			mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.archaius-core/${archaius-core-bundle.version}
-		</bundle>
+		<bundle dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.archaius-core/${archaius-core-bundle.version}</bundle>
 		<bundle dependency="true">mvn:io.reactivex/rxjava/${rxjava.version}</bundle>
 
 		<bundle>mvn:com.jollydays.camel/camel-hystrix-endpoint/${project.version}</bundle>
