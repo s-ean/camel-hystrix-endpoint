@@ -1,4 +1,7 @@
 # camel-hystrix-endpoint
+
+[![Build Status](https://travis-ci.org/jollydays/camel-hystrix-endpoint.svg?branch=master)](https://travis-ci.org/jollydays/camel-hystrix-endpoint)
+
 Camel endpoint which wraps child endpoints into a synchronous hystrix circuit breaker.
 
 This project allows easy integration of the hystrix component into camel routes. The very simple example might look like this:
