@@ -30,38 +30,38 @@ import org.apache.camel.spi.UriParam;
 @UriEndpoint(scheme = "hystrix", syntax = "hystrix:childUri", title = "hystrix component", producerOnly = true)
 public class HystrixEndpoint extends DefaultEndpoint implements DelegateEndpoint {
 
-	private String childUri;
+    private String childUri;
 
-	@UriParam(name = "groupId")
-	@Metadata(required = "true")
-	private String groupId;
+    @UriParam(name = "groupId")
+    @Metadata(required = "true")
+    private String groupId;
 
-	public HystrixEndpoint(final String endpointUri, final String remainingUri, final Component component) {
-		super(endpointUri, component);
-		childUri = remainingUri;
-	}
+    public HystrixEndpoint(final String endpointUri, final String remainingUri, final Component component) {
+        super(endpointUri, component);
+        childUri = remainingUri;
+    }
 
-	@Override
-	public Producer createProducer() throws Exception {
-		return new HystrixProducer(this, getCamelContext().getEndpoint(childUri).createProducer(), groupId);
-	}
+    @Override
+    public Producer createProducer() throws Exception {
+        return new HystrixProducer(this, getCamelContext().getEndpoint(childUri).createProducer(), groupId);
+    }
 
-	@Override
-	public Consumer createConsumer(final Processor processor) throws Exception {
-		return null;
-	}
+    @Override
+    public Consumer createConsumer(final Processor processor) throws Exception {
+        return null;
+    }
 
-	@Override
-	public boolean isSingleton() {
-		return false;
-	}
+    @Override
+    public boolean isSingleton() {
+        return false;
+    }
 
-	@Override
-	public Endpoint getEndpoint() {
-		return getCamelContext().getEndpoint(childUri);
-	}
+    @Override
+    public Endpoint getEndpoint() {
+        return getCamelContext().getEndpoint(childUri);
+    }
 
-	public void setGroupId(final String groupId) {
-		this.groupId = groupId;
-	}
+    public void setGroupId(final String groupId) {
+        this.groupId = groupId;
+    }
 }

@@ -35,52 +35,52 @@ import org.junit.Test;
 
 public class HystrixProducerTest extends CamelTestSupport {
 
-	public static final String CIRCUIT_BREAKER_FORCE_OPEN = "hystrix.command.default.circuitBreaker.forceOpen";
+    public static final String CIRCUIT_BREAKER_FORCE_OPEN = "hystrix.command.default.circuitBreaker.forceOpen";
 
-	@Produce(uri = "direct:start")
-	protected ProducerTemplate template;
+    @Produce(uri = "direct:start")
+    protected ProducerTemplate template;
 
-	@EndpointInject(uri = "mock:result")
-	protected MockEndpoint resultEndpoint;
+    @EndpointInject(uri = "mock:result")
+    protected MockEndpoint resultEndpoint;
 
-	private class TestRoute extends RouteBuilder {
+    private class TestRoute extends RouteBuilder {
 
-		@Override
-		public void configure() throws Exception {
-			onException(HystrixRuntimeException.class).handled(true).setBody().constant("error");
-			from("direct:start").to("hystrix:direct:mitm?groupId=test");
-			from("direct:mitm").to("mock:result");
-		}
-	}
+        @Override
+        public void configure() throws Exception {
+            onException(HystrixRuntimeException.class).handled(true).setBody().constant("error");
+            from("direct:start").to("hystrix:direct:mitm?groupId=test");
+            from("direct:mitm").to("mock:result");
+        }
+    }
 
-	@Before
-	public void setUp() throws Exception {
-		super.setUp();
-		ConfigurationManager.getConfigInstance().setProperty(CIRCUIT_BREAKER_FORCE_OPEN, "false");
-	}
+    @Before
+    public void setUp() throws Exception {
+        super.setUp();
+        ConfigurationManager.getConfigInstance().setProperty(CIRCUIT_BREAKER_FORCE_OPEN, "false");
+    }
 
-	@Override
-	protected CamelContext createCamelContext() throws Exception {
-		CamelContext context = super.createCamelContext();
-		return context;
-	}
+    @Override
+    protected CamelContext createCamelContext() throws Exception {
+        CamelContext context = super.createCamelContext();
+        return context;
+    }
 
-	@Override
-	protected RouteBuilder createRouteBuilder() throws Exception {
-		return new TestRoute();
-	}
+    @Override
+    protected RouteBuilder createRouteBuilder() throws Exception {
+        return new TestRoute();
+    }
 
-	@Test
-	public void shouldUseHystrixProducer() throws InterruptedException {
-		resultEndpoint.expectedBodiesReceived("test");
-		template.sendBody("test");
-		assertMockEndpointsSatisfied();
-	}
+    @Test
+    public void shouldUseHystrixProducer() throws InterruptedException {
+        resultEndpoint.expectedBodiesReceived("test");
+        template.sendBody("test");
+        assertMockEndpointsSatisfied();
+    }
 
-	@Test
-	public void shouldReactOnOpenCircuit() throws InterruptedException {
-		ConfigurationManager.getConfigInstance().setProperty(CIRCUIT_BREAKER_FORCE_OPEN, "true");
-		final Object response = template.requestBody("test");
-		assertEquals("error", response);
-	}
+    @Test
+    public void shouldReactOnOpenCircuit() throws InterruptedException {
+        ConfigurationManager.getConfigInstance().setProperty(CIRCUIT_BREAKER_FORCE_OPEN, "true");
+        final Object response = template.requestBody("test");
+        assertEquals("error", response);
+    }
 }
