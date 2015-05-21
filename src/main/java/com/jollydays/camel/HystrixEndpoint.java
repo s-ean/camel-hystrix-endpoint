@@ -32,9 +32,13 @@ public class HystrixEndpoint extends DefaultEndpoint implements DelegateEndpoint
 
     private String childUri;
 
-    @UriParam(name = "groupId")
+    @UriParam(name = "hystrixGroup")
     @Metadata(required = "true")
-    private String groupId;
+    private String group;
+
+    @UriParam(name = "hystrixCommand")
+    @Metadata(required = "false")
+    private String command;
 
     public HystrixEndpoint(final String endpointUri, final String remainingUri, final Component component) {
         super(endpointUri, component);
@@ -43,7 +47,7 @@ public class HystrixEndpoint extends DefaultEndpoint implements DelegateEndpoint
 
     @Override
     public Producer createProducer() throws Exception {
-        return new HystrixProducer(this, getCamelContext().getEndpoint(childUri).createProducer(), groupId);
+        return new HystrixProducer(this, getCamelContext().getEndpoint(childUri).createProducer(), group, command);
     }
 
     @Override
@@ -61,7 +65,11 @@ public class HystrixEndpoint extends DefaultEndpoint implements DelegateEndpoint
         return getCamelContext().getEndpoint(childUri);
     }
 
-    public void setGroupId(final String groupId) {
-        this.groupId = groupId;
+    public void setGroup(final String group) {
+        this.group = group;
+    }
+
+    public void setCommand(final String command) {
+        this.command = command;
     }
 }

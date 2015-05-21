@@ -23,6 +23,7 @@ package com.jollydays.camel;
 
 import com.netflix.hystrix.HystrixCommand;
 import com.netflix.hystrix.HystrixCommandGroupKey;
+import com.netflix.hystrix.HystrixCommandKey;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -33,7 +34,7 @@ import org.apache.camel.util.ServiceHelper;
 public class HystrixProducer extends DefaultProducer {
 
     private final Producer child;
-    private final String groupId;
+    private final HystrixCommand.Setter setter;
 
     @Override
     public Exchange createExchange() {
@@ -63,8 +64,7 @@ public class HystrixProducer extends DefaultProducer {
 
     @Override
     public void process(final Exchange exchange) throws Exception {
-        HystrixCommandGroupKey key = HystrixCommandGroupKey.Factory.asKey(groupId);
-        final HystrixCommand command = new HystrixCommand(key) {
+        final HystrixCommand command = new HystrixCommand(setter) {
             @Override
             protected Object run() throws Exception {
                 child.process(exchange);
@@ -74,10 +74,14 @@ public class HystrixProducer extends DefaultProducer {
         command.execute();
     }
 
-    public HystrixProducer(final Endpoint endpoint, final Producer child, final String groupId) {
+    public HystrixProducer(final Endpoint endpoint, final Producer child, final String group, final String command) {
         super(endpoint);
         this.child = child;
-        this.groupId = groupId;
+        HystrixCommandGroupKey groupKey = HystrixCommandGroupKey.Factory.asKey(group);
+        setter = HystrixCommand.Setter.withGroupKey(groupKey);
+        if (command != null) {
+            setter.andCommandKey(HystrixCommandKey.Factory.asKey(command));
+        }
     }
 
     @Override
