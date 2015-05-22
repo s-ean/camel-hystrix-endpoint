@@ -56,10 +56,10 @@ public class HystrixProducerTest extends CamelTestSupport {
         @Override
         public void configure() throws Exception {
             onException(HystrixRuntimeException.class).handled(true).setBody().constant("error");
-            from("direct:start").to("hystrix:direct:mitm?group=testGroup");
-            from("direct:mitm").to("hystrix:direct:final?group=testGroup&command=test");
+            from("direct:start").to("hystrix:direct:mitm?hystrixGroup=testGroup");
+            from("direct:mitm").to("hystrix:direct:final?hystrixGroup=testGroup&hystrixCommand=test");
             from("direct:final").to("mock:result");
-            from("direct:protectedSlowRoute").to("hystrix:direct:slowRoute?group=testGroup&command=slowCommand");
+            from("direct:protectedSlowRoute").to("hystrix:direct:slowRoute?hystrixGroup=testGroup&hystrixCommand=slowCommand");
             from("direct:slowRoute").delayer(1000).to("mock:slowResult");
         }
     }

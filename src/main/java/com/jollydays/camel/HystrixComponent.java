@@ -23,15 +23,18 @@ package com.jollydays.camel;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.util.URISupport;
 
 import java.util.Map;
 
 public class HystrixComponent extends DefaultComponent{
     @Override
     protected Endpoint createEndpoint(final String uri, final String remaining, final Map<String, Object> parameters) throws Exception {
-        final HystrixEndpoint endpoint = new HystrixEndpoint(uri, remaining, this);
-        endpoint.setGroup(getAndRemoveParameter(parameters, "hystrixGroup", String.class));
-        endpoint.setCommand(getAndRemoveParameter(parameters, "hystrixCommand", String.class));
+        final String group = getAndRemoveParameter(parameters, "hystrixGroup", String.class);
+        final String command = getAndRemoveParameter(parameters, "hystrixCommand", String.class);
+        final HystrixEndpoint endpoint = new HystrixEndpoint(uri, URISupport.appendParametersToURI(remaining, parameters), this);
+        endpoint.setGroup(group);
+        endpoint.setCommand(command);
         return endpoint;
     }
 }

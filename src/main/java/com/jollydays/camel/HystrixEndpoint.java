@@ -30,7 +30,7 @@ import org.apache.camel.spi.UriParam;
 @UriEndpoint(scheme = "hystrix", syntax = "hystrix:childUri", title = "hystrix component", producerOnly = true)
 public class HystrixEndpoint extends DefaultEndpoint implements DelegateEndpoint {
 
-    private String childUri;
+    private final String childUri;
 
     @UriParam(name = "hystrixGroup")
     @Metadata(required = "true")
@@ -67,6 +67,11 @@ public class HystrixEndpoint extends DefaultEndpoint implements DelegateEndpoint
 
     public void setGroup(final String group) {
         this.group = group;
+    }
+
+    @Override
+    public boolean isLenientProperties() {
+        return  true;
     }
 
     public void setCommand(final String command) {
