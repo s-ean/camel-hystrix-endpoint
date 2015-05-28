@@ -26,6 +26,7 @@
         <hystrix.version>1.4.5</hystrix.version>
         <rxjava.version>1.0.9</rxjava.version>
         <archaius-core-bundle.version>0.6.5_1</archaius-core-bundle.version>
+		<archaius-core.version>0.6.5</archaius-core.version>
 
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -52,6 +53,11 @@
             <artifactId>rxjava</artifactId>
             <version>${rxjava.version}</version>
         </dependency>
+		<dependency>
+			<groupId>com.netflix.archaius</groupId>
+			<artifactId>archaius-core</artifactId>
+			<version>${archaius-core.version}</version>
+		</dependency>
 
         <!-- test dependencies -->
         <dependency>
