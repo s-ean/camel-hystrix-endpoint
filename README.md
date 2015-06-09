@@ -36,3 +36,16 @@ When wrapping __direct__ endpoints with the hystrix component, whole sections of
 	}
 ```
 
+Binaries
+
+Jars for Maven, Ivy, Gradle and others can be found at [http://search.maven.org](http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22com.jollydays.camel%22%20AND%20a%3A%22camel-hystrix-endpoint%22).
+
+Example for Maven:
+
+```xml
+<dependency>
+  <groupId>com.jollydays.camel</groupId>
+  <artifactId>camel-hystrix-endpoint</artifactId>
+  <version>x.y.z</version>
+</dependency>
+```
