@@ -51,6 +51,12 @@ public class HystrixProducerTest extends CamelTestSupport {
     @EndpointInject(uri = "mock:slowResult")
     protected MockEndpoint slowResultEndpoint;
 
+    @Produce(uri = "direct:slowRouteWithSmallTimeout")
+    protected ProducerTemplate slowRouteWithSmallTimeoutTemplate;
+
+    @Produce(uri = "direct:slowRouteWithBigTimeout")
+    protected ProducerTemplate slowRouteWithBigTimeoutTemplate;
+
     private class TestRoute extends RouteBuilder {
 
         @Override
@@ -61,6 +67,12 @@ public class HystrixProducerTest extends CamelTestSupport {
             from("direct:final").to("mock:result");
             from("direct:protectedSlowRoute").to("hystrix:direct:slowRoute?hystrixGroup=testGroup&hystrixCommand=slowCommand");
             from("direct:slowRoute").delayer(1000).to("mock:slowResult");
+
+            // slow create a slow route that has a lower timeout than the default so we can be sure that the
+            // hystrixCommandTimeout parameter overrides the default set in @Before
+            from("direct:slowRouteWithSmallTimeout").to("hystrix:direct:slowRouteForParameterTimeout?hystrixGroup=testGroup&hystrixCommand=slowCommandViaParamST&hystrixCommandTimeout=100");
+            from("direct:slowRouteWithBigTimeout").to("hystrix:direct:slowRouteForParameterTimeout?hystrixGroup=testGroup&hystrixCommand=slowCommandViaParamBT&hystrixCommandTimeout=300");
+            from("direct:slowRouteForParameterTimeout").delayer(200).to("mock:slowResult");
         }
     }
 
@@ -106,5 +118,13 @@ public class HystrixProducerTest extends CamelTestSupport {
         final Object fastEnough = slowRouteTemplate.requestBody("test");
         assertEquals("test", fastEnough);
         slowResultEndpoint.assertIsSatisfied();
+    }
+
+    @Test
+    public void shouldRespectMaxExecutionTimeWithParamter() throws InterruptedException {
+        final Object tooSlowWithProperty = slowRouteWithSmallTimeoutTemplate.requestBody("test");
+        assertEquals("error", tooSlowWithProperty);
+        final Object fastEnough = slowRouteWithBigTimeoutTemplate.requestBody("test");
+        assertEquals("test", fastEnough);
     }
 }

@@ -24,6 +24,7 @@ package com.jollydays.camel;
 import com.netflix.hystrix.HystrixCommand;
 import com.netflix.hystrix.HystrixCommandGroupKey;
 import com.netflix.hystrix.HystrixCommandKey;
+import com.netflix.hystrix.HystrixCommandProperties;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -74,13 +75,16 @@ public class HystrixProducer extends DefaultProducer {
         command.execute();
     }
 
-    public HystrixProducer(final Endpoint endpoint, final Producer child, final String group, final String command) {
+    public HystrixProducer(final Endpoint endpoint, final Producer child, final String group, final String command, final Integer timeout) {
         super(endpoint);
         this.child = child;
         HystrixCommandGroupKey groupKey = HystrixCommandGroupKey.Factory.asKey(group);
         setter = HystrixCommand.Setter.withGroupKey(groupKey);
         if (command != null) {
             setter.andCommandKey(HystrixCommandKey.Factory.asKey(command));
+        }
+        if(timeout != null) {
+            setter.andCommandPropertiesDefaults(HystrixCommandProperties.Setter().withExecutionTimeoutInMilliseconds(timeout));
         }
     }
 

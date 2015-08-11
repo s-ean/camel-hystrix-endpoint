@@ -40,6 +40,10 @@ public class HystrixEndpoint extends DefaultEndpoint implements DelegateEndpoint
     @Metadata(required = "false")
     private String command;
 
+    @UriParam(name = "hystrixCommandTimeout")
+    @Metadata(required = "false")
+    private Integer timeout;
+
     public HystrixEndpoint(final String endpointUri, final String remainingUri, final Component component) {
         super(endpointUri, component);
         childUri = remainingUri;
@@ -47,7 +51,7 @@ public class HystrixEndpoint extends DefaultEndpoint implements DelegateEndpoint
 
     @Override
     public Producer createProducer() throws Exception {
-        return new HystrixProducer(this, getCamelContext().getEndpoint(childUri).createProducer(), group, command);
+        return new HystrixProducer(this, getCamelContext().getEndpoint(childUri).createProducer(), group, command, timeout);
     }
 
     @Override
@@ -71,10 +75,14 @@ public class HystrixEndpoint extends DefaultEndpoint implements DelegateEndpoint
 
     @Override
     public boolean isLenientProperties() {
-        return  true;
+        return true;
     }
 
     public void setCommand(final String command) {
         this.command = command;
+    }
+
+    public void setTimeout(Integer timeout) {
+        this.timeout = timeout;
     }
 }
