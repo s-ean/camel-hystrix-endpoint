@@ -27,14 +27,25 @@ import org.apache.camel.util.URISupport;
 
 import java.util.Map;
 
-public class HystrixComponent extends DefaultComponent{
+public class HystrixComponent extends DefaultComponent {
     @Override
     protected Endpoint createEndpoint(final String uri, final String remaining, final Map<String, Object> parameters) throws Exception {
         final String group = getAndRemoveParameter(parameters, "hystrixGroup", String.class);
         final String command = getAndRemoveParameter(parameters, "hystrixCommand", String.class);
+        final String timeout = getAndRemoveParameter(parameters, "hystrixCommandTimeout", String.class);
         final HystrixEndpoint endpoint = new HystrixEndpoint(uri, URISupport.appendParametersToURI(remaining, parameters), this);
         endpoint.setGroup(group);
         endpoint.setCommand(command);
+
+        if(timeout != null) {
+            try {
+                Integer parsedTimeout = Integer.valueOf(timeout);
+                endpoint.setTimeout(parsedTimeout);
+            } catch (NumberFormatException e) {
+                throw new IllegalArgumentException("Invalid value " + timeout + " for parameter hystrixCommandTimeout (needs to be a number)");
+            }
+        }
+
         return endpoint;
     }
 }
