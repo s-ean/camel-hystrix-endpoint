@@ -44,6 +44,14 @@ public class HystrixEndpoint extends DefaultEndpoint implements DelegateEndpoint
     @Metadata(required = "false")
     private Integer timeout;
 
+    @UriParam(name = "hystrixRethrowUnchecked")
+    @Metadata(required = "false", label = "Rethrow unchecked exception contained in the exchange and cause hystrix command to fail", defaultValue = "true")
+    private boolean rethrowUnchecked = true;
+
+    @UriParam(name = "hystrixRethrowChecked")
+    @Metadata(required = "false", label = "Rethrow checked exception contained in the exchange and cause hystrix command to fail", defaultValue = "false")
+    private boolean rethrowChecked = false;
+
     public HystrixEndpoint(final String endpointUri, final String remainingUri, final Component component) {
         super(endpointUri, component);
         childUri = remainingUri;
@@ -51,7 +59,7 @@ public class HystrixEndpoint extends DefaultEndpoint implements DelegateEndpoint
 
     @Override
     public Producer createProducer() throws Exception {
-        return new HystrixProducer(this, getCamelContext().getEndpoint(childUri).createProducer(), group, command, timeout);
+        return new HystrixProducer(this, getCamelContext().getEndpoint(childUri).createProducer(), group, command, timeout, rethrowUnchecked, rethrowChecked);
     }
 
     @Override
@@ -84,5 +92,21 @@ public class HystrixEndpoint extends DefaultEndpoint implements DelegateEndpoint
 
     public void setTimeout(Integer timeout) {
         this.timeout = timeout;
+    }
+
+    public boolean isRethrowChecked() {
+        return rethrowChecked;
+    }
+
+    public void setRethrowChecked(boolean rethrowChecked) {
+        this.rethrowChecked = rethrowChecked;
+    }
+
+    public boolean isRethrowUnchecked() {
+        return rethrowUnchecked;
+    }
+
+    public void setRethrowUnchecked(boolean rethrowUnchecked) {
+        this.rethrowUnchecked = rethrowUnchecked;
     }
 }

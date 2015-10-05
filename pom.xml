@@ -4,7 +4,7 @@
 
     <groupId>com.jollydays.camel</groupId>
     <artifactId>camel-hystrix-endpoint</artifactId>
-    <version>1.0.1</version>
+    <version>1.0.2-SNAPSHOT</version>
     <packaging>bundle</packaging>
     <name>Camel Hystrix endoint</name>
     <description>Camel endpoint which wraps child endpoints into a synchronous hystrix circuit breaker</description>

@@ -36,6 +36,8 @@ public class HystrixProducer extends DefaultProducer {
 
     private final Producer child;
     private final HystrixCommand.Setter setter;
+    private final boolean rethrowUnchecked;
+    private final boolean rethrowChecked;
 
     @Override
     public Exchange createExchange() {
@@ -69,13 +71,17 @@ public class HystrixProducer extends DefaultProducer {
             @Override
             protected Object run() throws Exception {
                 child.process(exchange);
+                Exception ex = exchange.getException();
+                if (ex != null && ((ex instanceof RuntimeException && rethrowUnchecked) || (!(ex instanceof RuntimeException) && rethrowChecked))) {
+                    throw ex;
+                }
                 return null;
             }
         };
         command.execute();
     }
 
-    public HystrixProducer(final Endpoint endpoint, final Producer child, final String group, final String command, final Integer timeout) {
+    public HystrixProducer(final Endpoint endpoint, final Producer child, final String group, final String command, final Integer timeout, boolean rethrowUnchecked, boolean rethrowChecked) {
         super(endpoint);
         this.child = child;
         HystrixCommandGroupKey groupKey = HystrixCommandGroupKey.Factory.asKey(group);
@@ -83,9 +89,11 @@ public class HystrixProducer extends DefaultProducer {
         if (command != null) {
             setter.andCommandKey(HystrixCommandKey.Factory.asKey(command));
         }
-        if(timeout != null) {
+        if (timeout != null) {
             setter.andCommandPropertiesDefaults(HystrixCommandProperties.Setter().withExecutionTimeoutInMilliseconds(timeout));
         }
+        this.rethrowUnchecked = rethrowUnchecked;
+        this.rethrowChecked = rethrowChecked;
     }
 
     @Override

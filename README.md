@@ -21,6 +21,8 @@ In this example the mock endpoint is protected by a hystrix endpoint by prefixin
 The _hystrixGroup_ parameter can be used to identify and group hystrix commands for monitoring in scaled environments.
 The _hystrixCommand_ parameter can be used to identify hystrix commands for distributed configuration of components.
 The _hystrixCommandTimeout_ parameter can be used to set the timeout for the hystrix command
+The _hystrixRethrowUnchecked_ parameter can be used to re-throw an unchecked exception if the exchange contains an unchecked exception after being processed by the nested endpoint and cause hystrix to short-cirquit. This value is true by default.
+The _hystrixRethrowChecked_ parameter can be used to re-throw an unchecked exception if the exchange contains an exception after being processed by the nested endpoint and cause hystrix to short-cirquit. This value is false by default.
 
 When wrapping __direct__ endpoints with the hystrix component, whole sections of a route can be protected, including processors and endpoints:
 
