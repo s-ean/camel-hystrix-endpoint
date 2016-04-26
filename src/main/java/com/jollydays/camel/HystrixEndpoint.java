@@ -52,14 +52,34 @@ public class HystrixEndpoint extends DefaultEndpoint implements DelegateEndpoint
     @Metadata(required = "false", label = "Rethrow checked exception contained in the exchange and cause hystrix command to fail", defaultValue = "false")
     private boolean rethrowChecked = false;
 
+    // addition to original source
+    @UriParam(name = "hystrixCircuitBreakerEnabled")
+    @Metadata(required = "false")
+    private Boolean circuitBreakerEnabled;
+
+    @UriParam(name = "hystrixCircuitBreakerErrorThresholdPercentage")
+    @Metadata(required = "false")
+    private Integer circuitBreakerErrorThresholdPercentage;
+
+    @UriParam(name = "hystrixCircuitBreakerRequestVolumeThreshold")
+    @Metadata(required = "false")
+    private Integer circuitBreakerRequestVolumeThreshold;
+
+    @UriParam(name = "hystrixCircuitBreakerSleepWindowInMilliseconds")
+    @Metadata(required = "false")
+    private Integer circuitBreakerSleepWindowInMilliseconds;
+    // end of addition
+
     public HystrixEndpoint(final String endpointUri, final String remainingUri, final Component component) {
         super(endpointUri, component);
         childUri = remainingUri;
     }
 
     @Override
+    // signature modified from original source
     public Producer createProducer() throws Exception {
-        return new HystrixProducer(this, getCamelContext().getEndpoint(childUri).createProducer(), group, command, timeout, rethrowUnchecked, rethrowChecked);
+        return new HystrixProducer(this, getCamelContext().getEndpoint(childUri).createProducer(), group, command, timeout, rethrowUnchecked, rethrowChecked,
+                circuitBreakerEnabled, circuitBreakerErrorThresholdPercentage, circuitBreakerRequestVolumeThreshold, circuitBreakerSleepWindowInMilliseconds);
     }
 
     @Override
@@ -109,4 +129,22 @@ public class HystrixEndpoint extends DefaultEndpoint implements DelegateEndpoint
     public void setRethrowUnchecked(boolean rethrowUnchecked) {
         this.rethrowUnchecked = rethrowUnchecked;
     }
+
+    // addition to original source
+    public void setCircuitBreakerEnabled(Boolean circuitBreakerEnabled) {
+        this.circuitBreakerEnabled = circuitBreakerEnabled;
+    }
+
+    public void setCircuitBreakerErrorThresholdPercentage(Integer circuitBreakerErrorThresholdPercentage) {
+        this.circuitBreakerErrorThresholdPercentage = circuitBreakerErrorThresholdPercentage;
+    }
+
+    public void setCircuitBreakerRequestVolumeThreshold(Integer circuitBreakerRequestVolumeThreshold) {
+        this.circuitBreakerRequestVolumeThreshold = circuitBreakerRequestVolumeThreshold;
+    }
+
+    public void setCircuitBreakerSleepWindowInMilliseconds(Integer circuitBreakerSleepWindowInMilliseconds) {
+        this.circuitBreakerSleepWindowInMilliseconds = circuitBreakerSleepWindowInMilliseconds;
+    }
+    // end of addition
 }

@@ -81,7 +81,9 @@ public class HystrixProducer extends DefaultProducer {
         command.execute();
     }
 
-    public HystrixProducer(final Endpoint endpoint, final Producer child, final String group, final String command, final Integer timeout, boolean rethrowUnchecked, boolean rethrowChecked) {
+    // signature modified from original source
+    public HystrixProducer(final Endpoint endpoint, final Producer child, final String group, final String command, final Integer timeout, boolean rethrowUnchecked, boolean rethrowChecked,
+                           Boolean circuitBreakerEnabled, Integer circuitBreakerErrorThresholdPercentage, Integer circuitBreakerRequestVolumeThreshold, Integer circuitBreakerSleepWindowInMilliseconds) {
         super(endpoint);
         this.child = child;
         HystrixCommandGroupKey groupKey = HystrixCommandGroupKey.Factory.asKey(group);
@@ -89,9 +91,24 @@ public class HystrixProducer extends DefaultProducer {
         if (command != null) {
             setter.andCommandKey(HystrixCommandKey.Factory.asKey(command));
         }
-        if (timeout != null) {
-            setter.andCommandPropertiesDefaults(HystrixCommandProperties.Setter().withExecutionTimeoutInMilliseconds(timeout));
-        }
+
+        // modification from original source
+        HystrixCommandProperties.Setter propertiesSetter = HystrixCommandProperties.Setter();
+
+        if (timeout != null)
+            propertiesSetter.withExecutionTimeoutInMilliseconds(timeout);
+        if (circuitBreakerEnabled != null)
+            propertiesSetter.withCircuitBreakerEnabled(circuitBreakerEnabled);
+        if (circuitBreakerErrorThresholdPercentage != null)
+            propertiesSetter.withCircuitBreakerErrorThresholdPercentage(circuitBreakerErrorThresholdPercentage);
+        if (circuitBreakerRequestVolumeThreshold != null)
+            propertiesSetter.withCircuitBreakerRequestVolumeThreshold(circuitBreakerRequestVolumeThreshold);
+        if (circuitBreakerSleepWindowInMilliseconds != null)
+            propertiesSetter.withCircuitBreakerSleepWindowInMilliseconds(circuitBreakerSleepWindowInMilliseconds);
+
+        setter.andCommandPropertiesDefaults(propertiesSetter);
+        // end of modification
+
         this.rethrowUnchecked = rethrowUnchecked;
         this.rethrowChecked = rethrowChecked;
     }
