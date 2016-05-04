@@ -59,8 +59,6 @@ public class HystrixComponent extends DefaultComponent {
         endpoint.setCircuitBreakerErrorThresholdPercentage(ParseUtility.tryParseInt(circuitBreakerErrorThresholdPercentage));
         endpoint.setCircuitBreakerRequestVolumeThreshold(ParseUtility.tryParseInt(circuitBreakerRequestVolumeThreshold));
         endpoint.setCircuitBreakerSleepWindowInMilliseconds(ParseUtility.tryParseInt(circuitBreakerSleepWindowInMilliseconds));
-
-        endpoint.setRethrowUnchecked(false);
         // end of addition
 
         return endpoint;
