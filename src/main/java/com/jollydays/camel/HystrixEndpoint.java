@@ -68,6 +68,14 @@ public class HystrixEndpoint extends DefaultEndpoint implements DelegateEndpoint
     @UriParam(name = "hystrixCircuitBreakerSleepWindowInMilliseconds")
     @Metadata(required = "false")
     private Integer circuitBreakerSleepWindowInMilliseconds;
+
+    @UriParam(name = "hystrixFallbackEnabled")
+    @Metadata(required = "false")
+    private Boolean fallbackEnabled;
+
+    @UriParam(name = "hystrixCoreSize")
+    @Metadata(required = "false")
+    private Integer coreSize;
     // end of addition
 
     public HystrixEndpoint(final String endpointUri, final String remainingUri, final Component component) {
@@ -79,7 +87,8 @@ public class HystrixEndpoint extends DefaultEndpoint implements DelegateEndpoint
     // signature modified from original source
     public Producer createProducer() throws Exception {
         return new HystrixProducer(this, getCamelContext().getEndpoint(childUri).createProducer(), group, command, timeout, rethrowUnchecked, rethrowChecked,
-                circuitBreakerEnabled, circuitBreakerErrorThresholdPercentage, circuitBreakerRequestVolumeThreshold, circuitBreakerSleepWindowInMilliseconds);
+                circuitBreakerEnabled, circuitBreakerErrorThresholdPercentage, circuitBreakerRequestVolumeThreshold, circuitBreakerSleepWindowInMilliseconds,
+                fallbackEnabled, coreSize);
     }
 
     @Override
@@ -145,6 +154,14 @@ public class HystrixEndpoint extends DefaultEndpoint implements DelegateEndpoint
 
     public void setCircuitBreakerSleepWindowInMilliseconds(Integer circuitBreakerSleepWindowInMilliseconds) {
         this.circuitBreakerSleepWindowInMilliseconds = circuitBreakerSleepWindowInMilliseconds;
+    }
+
+    public void setFallbackEnabled(Boolean fallbackEnabled){
+        this.fallbackEnabled = fallbackEnabled;
+    }
+
+    public void setCoreSize(Integer coreSize){
+        this.coreSize = coreSize;
     }
     // end of addition
 }

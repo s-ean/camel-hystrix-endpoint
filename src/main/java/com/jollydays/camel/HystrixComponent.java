@@ -39,6 +39,8 @@ public class HystrixComponent extends DefaultComponent {
         final String circuitBreakerErrorThresholdPercentage = getAndRemoveParameter(parameters, "hystrixCircuitBreakerErrorThresholdPercentage", String.class);
         final String circuitBreakerRequestVolumeThreshold = getAndRemoveParameter(parameters, "hystrixCircuitBreakerRequestVolumeThreshold", String.class);
         final String circuitBreakerSleepWindowInMilliseconds = getAndRemoveParameter(parameters, "hystrixCircuitBreakerSleepWindowInMilliseconds", String.class);
+        final String fallbackEnabled = getAndRemoveParameter(parameters, "hystrixFallbackEnabled", String.class);
+        final String coreSize = getAndRemoveParameter(parameters, "hystrixCoreSize", String.class);
         // end of addition
 
         final HystrixEndpoint endpoint = new HystrixEndpoint(uri, URISupport.appendParametersToURI(remaining, parameters), this);
@@ -59,6 +61,8 @@ public class HystrixComponent extends DefaultComponent {
         endpoint.setCircuitBreakerErrorThresholdPercentage(ParseUtility.tryParseInt(circuitBreakerErrorThresholdPercentage));
         endpoint.setCircuitBreakerRequestVolumeThreshold(ParseUtility.tryParseInt(circuitBreakerRequestVolumeThreshold));
         endpoint.setCircuitBreakerSleepWindowInMilliseconds(ParseUtility.tryParseInt(circuitBreakerSleepWindowInMilliseconds));
+        endpoint.setFallbackEnabled(ParseUtility.tryParseBoolean(fallbackEnabled));
+        endpoint.setCoreSize(ParseUtility.tryParseInt(coreSize));
         // end of addition
 
         return endpoint;

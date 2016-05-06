@@ -25,6 +25,9 @@ import com.netflix.hystrix.HystrixCommand;
 import com.netflix.hystrix.HystrixCommandGroupKey;
 import com.netflix.hystrix.HystrixCommandKey;
 import com.netflix.hystrix.HystrixCommandProperties;
+// modification from original source
+import com.netflix.hystrix.HystrixThreadPoolProperties;
+// end of modification
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -83,7 +86,8 @@ public class HystrixProducer extends DefaultProducer {
 
     // signature modified from original source
     public HystrixProducer(final Endpoint endpoint, final Producer child, final String group, final String command, final Integer timeout, boolean rethrowUnchecked, boolean rethrowChecked,
-                           Boolean circuitBreakerEnabled, Integer circuitBreakerErrorThresholdPercentage, Integer circuitBreakerRequestVolumeThreshold, Integer circuitBreakerSleepWindowInMilliseconds) {
+                           Boolean circuitBreakerEnabled, Integer circuitBreakerErrorThresholdPercentage, Integer circuitBreakerRequestVolumeThreshold,
+                           Integer circuitBreakerSleepWindowInMilliseconds, Boolean fallbackEnabled, Integer coreSize) {
         super(endpoint);
         this.child = child;
         HystrixCommandGroupKey groupKey = HystrixCommandGroupKey.Factory.asKey(group);
@@ -93,20 +97,27 @@ public class HystrixProducer extends DefaultProducer {
         }
 
         // modification from original source
-        HystrixCommandProperties.Setter propertiesSetter = HystrixCommandProperties.Setter();
+        HystrixCommandProperties.Setter commandPropertiesSetter = HystrixCommandProperties.Setter();
+        HystrixThreadPoolProperties.Setter threadPoolPropertiesSetter = HystrixThreadPoolProperties.Setter();
 
         if (timeout != null)
-            propertiesSetter.withExecutionTimeoutInMilliseconds(timeout);
+            commandPropertiesSetter.withExecutionTimeoutInMilliseconds(timeout);
         if (circuitBreakerEnabled != null)
-            propertiesSetter.withCircuitBreakerEnabled(circuitBreakerEnabled);
+            commandPropertiesSetter.withCircuitBreakerEnabled(circuitBreakerEnabled);
         if (circuitBreakerErrorThresholdPercentage != null)
-            propertiesSetter.withCircuitBreakerErrorThresholdPercentage(circuitBreakerErrorThresholdPercentage);
+            commandPropertiesSetter.withCircuitBreakerErrorThresholdPercentage(circuitBreakerErrorThresholdPercentage);
         if (circuitBreakerRequestVolumeThreshold != null)
-            propertiesSetter.withCircuitBreakerRequestVolumeThreshold(circuitBreakerRequestVolumeThreshold);
+            commandPropertiesSetter.withCircuitBreakerRequestVolumeThreshold(circuitBreakerRequestVolumeThreshold);
         if (circuitBreakerSleepWindowInMilliseconds != null)
-            propertiesSetter.withCircuitBreakerSleepWindowInMilliseconds(circuitBreakerSleepWindowInMilliseconds);
+            commandPropertiesSetter.withCircuitBreakerSleepWindowInMilliseconds(circuitBreakerSleepWindowInMilliseconds);
+        if (fallbackEnabled != null)
+            commandPropertiesSetter.withFallbackEnabled(fallbackEnabled);
+        if (coreSize != null)
+            threadPoolPropertiesSetter.withCoreSize(coreSize);
 
-        setter.andCommandPropertiesDefaults(propertiesSetter);
+
+        setter.andCommandPropertiesDefaults(commandPropertiesSetter);
+        setter.andThreadPoolPropertiesDefaults(threadPoolPropertiesSetter);
         // end of modification
 
         this.rethrowUnchecked = rethrowUnchecked;
